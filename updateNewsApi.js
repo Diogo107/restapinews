@@ -4,9 +4,13 @@ const puppeteer = require('puppeteer')
 const TopNews = require('./Schemas/topNews')
 const mongoose = require('mongoose');
 const dotenv = require('dotenv').config();
-mongoose.connect(process.env.MONGOOSE_SECRET, {
-  useNewUrlParser: true
-});
+try {
+    mongoose.connect(process.env.MONGOOSE_SECRET, {
+        useNewUrlParser: true
+    });
+} catch (error) {
+    console.log('===> Error: ', error)
+}
 
 // Source => Noticias ao Minuto (pt-PT)
 // Function to get the top news
