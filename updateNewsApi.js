@@ -71,14 +71,15 @@ const updateTopNews = async () => {
                 }
                 index++
                 update ()
+            } else {
+                process.exit()
             }
         }
         await update ()
         //browser.close()
-        //process.exit()
     }
     await goForContent()
-    console.log('===> update one of them')
+    console.log('===> updated all top links')
 }
 updateTopNews()
 
