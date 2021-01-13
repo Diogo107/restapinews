@@ -17,7 +17,7 @@ try {
 const updateTopNews = async () => {
     const url = 'https://www.noticiasaominuto.com'
     const browser = await puppeteer.launch({ 
-        args: [ '--start-maximized'], // you can also use '--start-fullscreen'
+        args: [ '--start-maximized', '--no-sandbox'], // you can also use '--start-fullscreen'
         headless: true 
     })
     const page = await browser.newPage()
