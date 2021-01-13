@@ -12,6 +12,17 @@ try {
     console.log('===> Error: ', error)
 }
 
+const chromeOptions = {
+    headless: true,
+    defaultViewport: null,
+    args: [
+        "--incognito",
+        "--no-sandbox",
+        "--single-process",
+        "--no-zygote"
+    ],
+}
+
 // Source => Noticias ao Minuto (pt-PT)
 // Function to get the top news
 const updateTopNews = async () => {
