@@ -27,10 +27,7 @@ const chromeOptions = {
 // Function to get the top news
 const updateTopNews = async () => {
     const url = 'https://www.noticiasaominuto.com'
-    const browser = await puppeteer.launch({ 
-        args: [ '--start-maximized', '--no-sandbox'], // you can also use '--start-fullscreen'
-        headless: true 
-    })
+    const browser = await puppeteer.launch(chromeOptions)
     const page = await browser.newPage()
     await page.goto(url, {
         waitUntil: 'networkidle2'

@@ -5,6 +5,13 @@ const express = require('express');
 const app = express();
 const TopNews = require('./Schemas/topNews')
 const PORT = process.env.PORT || 3000;
+try {
+    mongoose.connect(process.env.MONGOOSE_SECRET, {
+        useNewUrlParser: true
+    });
+} catch (error) {
+    console.log('===> Error: ', error)
+}
 
 
 app.get('/ping', async (req, res) => {
