@@ -26,12 +26,14 @@ const chromeOptions = {
 // Source => Noticias ao Minuto (pt-PT)
 // Function to get the top news
 const updateTopNews = async () => {
+    console.log('===> inside first function')
     const url = 'https://www.noticiasaominuto.com'
     const browser = await puppeteer.launch(chromeOptions)
     const page = await browser.newPage()
     await page.goto(url, {
         waitUntil: 'networkidle2'
     })
+    console.log('===> page has opened')
     const topFiveNewsUrls = await page.evaluate( () => {
         const list = []
         for ( let i = 1; i < 6; i++ ) {
@@ -39,12 +41,14 @@ const updateTopNews = async () => {
         }
         return list
     })
+    console.log('===> links were catched')
     // Update Top Five Pages Content
     async function goForContent () {
         let index = 0
         async function update () {
             if (index < topFiveNewsUrls.length){
                 let duplicated = await TopNews.exists({ url: topFiveNewsUrls[index] })
+                console.log('===> exists on DB? ', duplicated)
                 if (!duplicated){
                     await page.goto(topFiveNewsUrls[index], {
                         waitUntil: 'networkidle2'
@@ -74,6 +78,7 @@ const updateTopNews = async () => {
         //process.exit()
     }
     await goForContent()
+    console.log('===> update one of them')
 }
 updateTopNews()
 
