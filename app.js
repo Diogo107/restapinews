@@ -4,9 +4,7 @@ require('dotenv').config()
 const express = require('express');
 const app = express();
 
-const port = process.env.NODE_ENV || 3000;
-
-console.log('================> ', port)
+const port = process.env.NODE_ENV || 5000;
 //console.log('===> '. process.env.NODE_ENV)
 
 app.get('/ping', (req, res) => {
@@ -17,4 +15,5 @@ app.get('*', (req, res) => {
     res.send('Try to go to /ping');
 });
 
-app.listen(port, () => console.log(`Hello world app listening on port ${port}!`))
+app.listen(port);
+console.log(`Listening on ${port}`);
