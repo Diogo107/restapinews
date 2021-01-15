@@ -4,6 +4,7 @@ require('dotenv').config()
 const express = require('express');
 const app = express();
 const TopNews = require('./Schemas/topNews')
+const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3000;
 try {
     mongoose.connect(process.env.MONGOOSE_SECRET, {
@@ -13,15 +14,13 @@ try {
     console.log('===> Error: ', error)
 }
 
-
 app.get('/ping', async (req, res) => {
-    TopNews.create( {
-    title: "String",
-    subtitle: "String",
-    imageUrl: "String",
-    content: ["String", "number"],
-    url: "asdasdasd"+Math.floor(100*Math.random())
-  })
+    res.send('===> pong');
+});
+
+app.get('/api/app', async (req, res) => {
+    const result = await TopNews.find()
+    console.log('===> Result', result)
     res.send('===> pong');
 });
 

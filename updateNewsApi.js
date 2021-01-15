@@ -28,7 +28,7 @@ const chromeOptions = {
 const updateTopNews = async () => {
     console.log('===> inside first function')
     const url = 'https://www.noticiasaominuto.com'
-    const browser = await puppeteer.launch(chromeOptions)
+    const browser = await puppeteer.launch({ headless: false})
     const page = await browser.newPage()
     await page.goto(url, {
         waitUntil: 'networkidle2'
@@ -94,5 +94,21 @@ const getOtherNews = async () => {
     await page.goto(url, {
         waitUntil: 'networkidle2'
     })
+    let listOfUrls = await page.evaluate(()=>{
+        let list = []
+        let all = document.getElementsByTagName('a')
+        for (i in document.getElementsByTagName('a')) {
+            if (i != 'length' && i != 'item' && i != 'namedItem'){
+                console.log('===>', i)
+                list.push(document.getElementsByTagName('a')[i].getAttribute('href'))
+            }
+        }
+        return list
+    })
+    console.log('===> List of URL', listOfUrls)
 }
 //getOtherNews()
+
+
+// Use this on the URL to get the category
+//        .split('/').slice(3, 4)[0]
