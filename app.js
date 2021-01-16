@@ -21,7 +21,8 @@ app.get('/ping', async (req, res) => {
 });
 
 app.get('/api/app', async (req, res) => {
-    const result = await TopNews.find()
+    const result = await TopNews.find().sort({"createdAt":-1})
+    console.log('===> result', result)
     res.json({result});
 });
 
