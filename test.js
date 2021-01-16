@@ -20,7 +20,10 @@ let a = [ 'https://www.noticiasaominuto.com/cultura/1665185/covid-19-livrarias-v
   'https://www.noticiasaominuto.com/propriedade-intelectual',
   'https://www.noticiasaominuto.com/politica-de-privacidade']
 
+
+let b = 'https://www.noticiasaominuto.com/equipa'
+b = parse(b).pathname.split('/').slice(1).length > 1
 url = parse(a[0], true)
 url = url.pathname.split('/').slice(1)
 
-console.log(url)
+console.log(b)

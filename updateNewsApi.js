@@ -4,6 +4,7 @@ const puppeteer = require('puppeteer')
 const TopNews = require('./Schemas/topNews')
 const mongoose = require('mongoose');
 const dotenv = require('dotenv').config();
+var parse = require('url-parse')
 try {
     mongoose.connect(process.env.MONGOOSE_SECRET, {
         useNewUrlParser: true
@@ -81,14 +82,14 @@ const updateTopNews = async () => {
     await goForContent()
     console.log('===> updated all top links')
 }
-updateTopNews()
+//updateTopNews()
 
 // Function to get other news
 const getOtherNews = async () => {
     const url = 'https://www.noticiasaominuto.com'
     const browser = await puppeteer.launch({ 
         args: [ '--start-maximized'], // you can also use '--start-fullscreen'
-        headless: false 
+        headless: true 
     })
     const page = await browser.newPage()
     await page.goto(url, {
@@ -105,10 +106,38 @@ const getOtherNews = async () => {
         }
         return list
     })
-    console.log('===> List of URL', listOfUrls)
+    listOfUrls = listOfUrls.filter(e => {
+        //console.log(parse(e).pathname.split('/').slice(1).length > 1)
+        return parse(e).pathname.split('/').slice(1).length > 2 && e.includes('https://www.noticiasaominuto.com') && !e.includes('/desporto/') && !e.includes('vozes-ao-minuto')
+    })
+    console.log('===> with list od Urls', listOfUrls)
+    async function updateWithContent (listOfUrls) {
+        for await (let url of listOfUrls){
+            if (!await TopNews.exists({ url: url }) ) {
+                await page.goto(url, {
+                            waitUntil: 'networkidle2'
+                        })
+                let singleTopNews = await page.evaluate(()=> {
+                    let title = document.querySelector('body > div.main-container > div.bg-white > div.container-fluid.no-padding.news-wrapper > div.col-lg-8.col-md-6.col-sm-12.col-xs-12 > div.news-container > h1') && document.querySelector('body > div.main-container > div.bg-white > div.container-fluid.no-padding.news-wrapper > div.col-lg-8.col-md-6.col-sm-12.col-xs-12 > div.news-container > h1').innerText
+                    let subtitle = document.querySelector('body > div.main-container > div.bg-white > div.container-fluid.no-padding.news-wrapper > div.col-lg-8.col-md-6.col-sm-12.col-xs-12 > div.news-container > h2') && document.querySelector('body > div.main-container > div.bg-white > div.container-fluid.no-padding.news-wrapper > div.col-lg-8.col-md-6.col-sm-12.col-xs-12 > div.news-container > h2').innerText
+                    let content = function () {
+                        let text = []
+                        for (let i = 1; i < 20; i++){
+                            document.querySelector(`body > div.main-container > div.bg-white > div.container-fluid.no-padding.news-wrapper > div.col-lg-8.col-md-6.col-sm-12.col-xs-12 > div.news-container > div.row.news-main-text-container > div > div > p:nth-child(${i})`) != null && text.push(document.querySelector(`body > div.main-container > div.bg-white > div.container-fluid.no-padding.news-wrapper > div.col-lg-8.col-md-6.col-sm-12.col-xs-12 > div.news-container > div.row.news-main-text-container > div > div > p:nth-child(${i})`).innerText)
+                        }
+                        return text
+                    }()
+                    let imgUrl = document.querySelector('body > div.main-container > div.bg-white > div.container-fluid.no-padding.news-wrapper > div.col-lg-8.col-md-6.col-sm-12.col-xs-12 > div.news-container > div.news-main-image > picture > img') && document.querySelector('body > div.main-container > div.bg-white > div.container-fluid.no-padding.news-wrapper > div.col-lg-8.col-md-6.col-sm-12.col-xs-12 > div.news-container > div.news-main-image > picture > img').getAttribute('src')
+                    return { title, subtitle, content, imgUrl }
+                })
+                singleTopNews.url = url
+                singleTopNews.category = url.split('/')[3]
+                console.log(singleTopNews)
+                await TopNews.create(singleTopNews)
+            }
+        }
+    }
+    updateWithContent (listOfUrls)
 }
-//getOtherNews()
+getOtherNews()
 
-
-// Use this on the URL to get the category
-//        .split('/').slice(3, 4)[0]

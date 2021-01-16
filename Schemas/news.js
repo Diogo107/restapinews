@@ -6,6 +6,7 @@ const schema = new mongoose.Schema(
     subtitle: String,
     imageUrl: String,
     content: [String],
+    category: String,
     url: {
       type: String,
       unique: true,

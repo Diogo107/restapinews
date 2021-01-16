@@ -4,8 +4,9 @@ const schema = new mongoose.Schema(
   {
     title: String,
     subtitle: String,
-    imageUrl: String,
+    imgUrl: String,
     content: [String],
+    category: String,
     url: {
       type: String,
       unique: true,

@@ -5,7 +5,8 @@ const express = require('express');
 const app = express();
 const TopNews = require('./Schemas/topNews')
 const mongoose = require('mongoose');
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
+const cors = require("cors");
 try {
     mongoose.connect(process.env.MONGOOSE_SECRET, {
         useNewUrlParser: true
@@ -14,14 +15,16 @@ try {
     console.log('===> Error: ', error)
 }
 
+app.use(cors());
 app.get('/ping', async (req, res) => {
     res.send('===> pong');
 });
 
-app.get('/api/app', async (req, res) => {
-    const result = await TopNews.find()
+app.get('/api/app/:category', async (req, res) => {
+    console.log('this is a variable', req.params.category)
+    const result = await TopNews.find({category:req.params.category})
     console.log('===> Result', result)
-    res.send('===> pong');
+    res.json({result});
 });
 
 app.get('*', (req, res) => {
