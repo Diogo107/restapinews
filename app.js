@@ -20,15 +20,13 @@ app.get('/ping', async (req, res) => {
     res.send('===> pong');
 });
 
-app.get('/api/app/:category', async (req, res) => {
-    console.log('this is a variable', req.params.category)
-    const result = await TopNews.find({category:req.params.category})
-    console.log('===> Result', result)
+app.get('/api/app', async (req, res) => {
+    const result = await TopNews.find()
     res.json({result});
 });
 
 app.get('*', (req, res) => {
-    res.send('Try to go to /ping');
+    res.send('News API on the /api/app');
 });
 
 app.listen(PORT, () => console.log(`Listening on ${PORT}`));
